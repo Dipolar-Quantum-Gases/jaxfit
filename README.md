@@ -14,7 +14,7 @@
 
 JAXFit takes well tested and developed SciPy nonlinear least squares (NLSQ) curve fitting algorithms, but runs them on the GPU/TPU using [JAX](https://jax.readthedocs.io/en/latest/notebooks/quickstart.html) for a massive fit speed up. The package is very easy to use as the fit functions are defined only in Python with no CUDA programming needed. 
 
-JAXFit also improves on SciPy's algorithm by taking advantage of JAX's in-built [automatic differentiation](https://jax.readthedocs.io/en/latest/notebooks/autodiff_cookbook.html) (autodiff) of Python functions. We use we use JAX's autodiff to calculate the Jacobians in the NLSQ algorithms rather than requiring the user to give analytic partial derivatives or using numeric approximation techniques.
+JAXFit also improves on SciPy's algorithm by taking advantage of JAX's in-built [automatic differentiation](https://jax.readthedocs.io/en/latest/notebooks/autodiff_cookbook.html) (autodiff) of Python functions. We use JAX's autodiff to calculate the Jacobians in the NLSQ algorithms rather than requiring the user to give analytic partial derivatives or using numeric approximation techniques.
 
 
 We've designed JAXFit to be a drop-in replacement for SciPy's curve_fit function. Below we show how to fit a linear function with some data
@@ -46,7 +46,7 @@ def exp(x, a, b): # fit function
 
 
 For more complex fit functions there are a few JIT function caveats (see [Current gotchas](#current-gotchas)) such as avoiding control code within the fit function (see [JAX's sharp edges](https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.html) 
-article for more in-depth look at JAX specific caveats).
+article for a more in-depth look at JAX specific caveats).
 
 
 ### Contents
@@ -193,54 +193,3 @@ If you use JAXFit consider citing the introductory paper:
 
 For details about the JAXFit API, see the
 [reference documentation](https://jax.readthedocs.io/).
-
-<!--
-<img src="https://github.com/Dipolar-Quantum-Gases/nn-beam-profiling/blob/master/imgs/thumbnail.jpg?raw=true" alt="drawing" width="150"/> <img src="https://github.com/Dipolar-Quantum-Gases/nn-beam-profiling/blob/master/imgs/thumbnailexp.png?raw=true" alt="drawing" width="150"/>
-
-This is code associated with the paper "[Measuring Laser Beams with a Neural Network](https://doi.org/10.1364/AO.443531)." An ArXiv version of the paper is also available [here](https://arxiv.org/abs/2202.07801).
-
-Currently the repo has two Google Colab notebooks along with supporting Python code.
-
-The [first Colab notebook](https://colab.research.google.com/github/Dipolar-Quantum-Gases/nn-beam-profiling/blob/master/Explore_the_Dataset.ipynb) shows how to download and use the simulated and experimental datasets from the paper. The datasets are located in an Oxford University Research Archive and can be found [here](https://doi.org/10.5287/bodleian:JbDXrnQN1).
-
-The [second Colab notebook](https://colab.research.google.com/github/Dipolar-Quantum-Gases/nn-beam-profiling/blob/master/Neural_Network_Beam_Profiling_Tutorial.ipynb) demonstrates how to create a neural network in Detectron2 that simultaneously detects and measures laser beams from the dataset images.
--->
-
-<!--
-<img src="https://github.com/Dipolar-Quantum-Gases/nn-beam-profiling/blob/master/imgs/thumbnail.jpg?raw=true" alt="drawing" width="150"/> <img src="https://github.com/Dipolar-Quantum-Gases/nn-beam-profiling/blob/master/imgs/thumbnailexp.png?raw=true" alt="drawing" width="150"/>
-
-This is code associated with the paper "[Measuring Laser Beams with a Neural Network](https://doi.org/10.1364/AO.443531)." An ArXiv version of the paper is also available [here](https://arxiv.org/abs/2202.07801).
-
-Currently the repo has two Google Colab notebooks along with supporting Python code.
-
-The [first Colab notebook](https://colab.research.google.com/github/Dipolar-Quantum-Gases/nn-beam-profiling/blob/master/Explore_the_Dataset.ipynb) shows how to download and use the simulated and experimental datasets from the paper. The datasets are located in an Oxford University Research Archive and can be found [here](https://doi.org/10.5287/bodleian:JbDXrnQN1).
-
-The [second Colab notebook](https://colab.research.google.com/github/Dipolar-Quantum-Gases/nn-beam-profiling/blob/master/Neural_Network_Beam_Profiling_Tutorial.ipynb) demonstrates how to create a neural network in Detectron2 that simultaneously detects and measures laser beams from the dataset images.
-
-
-JAX be slightly difficult to install as it needs to know the CUDA version of the GPU if there is one on the machine.can be pip installed using the following command
-
-```bash
-pip install jaxfit
-```
-
-However, JAXFit relies on JAX which cannot be installed
-
-relies on Numpy, SciPy, Matplotlib and JAX. The first three libraries are easily installable, 
-
-Once JAX has been installed, then JAXFit can be installed with the following command:
-
-
-
-### JAX pip installation: Linux
-
-JAX can be faily easily installed on Linux with the instructions which 
-
-
-### JAX Windows Installation
-
-For Windows, JAX does not natively support pre-built pip install wheels.  To install JAX on windows 
-
-However, we've found it easier to use pre-built JAX wheels which can be found in [this Github repo](https://github.com/cloudhan/jax-windows-builder). 
-
--->
