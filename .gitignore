@@ -1,0 +1,8 @@
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+requirements.txt
+benchmark/results/*
+!benchmark/results/hold.txt
+CITATION.bib
