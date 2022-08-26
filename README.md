@@ -7,12 +7,15 @@
 
 [**Quickstart**](#quickstart-colab-in-the-cloud)
 | [**Install guide**](#installation)
-| [**Reference docs**](https://youtu.be/xvFZjo5PgG0)
+| [**ArXiv Paper**](https://doi.org/10.48550/arXiv.2208.12187)
 
+<!--
+| [**Reference docs**](https://youtu.be/xvFZjo5PgG0)
+-->
 
 ## What is JAXFit?
 
-JAXFit takes well tested and developed SciPy nonlinear least squares (NLSQ) curve fitting algorithms, but runs them on the GPU/TPU using [JAX](https://jax.readthedocs.io/en/latest/notebooks/quickstart.html) for a massive fit speed up. The package is very easy to use as the fit functions are defined only in Python with no CUDA programming needed. 
+JAXFit takes well tested and developed SciPy nonlinear least squares (NLSQ) curve fitting algorithms, but runs them on the GPU/TPU using [JAX](https://jax.readthedocs.io/en/latest/notebooks/quickstart.html) for a massive fit speed up. The package is very easy to use as the fit functions are defined only in Python with no CUDA programming needed. An introductory paper detailing the algorithm and performance improvements over SciPy/Gpufit can be found [here](https://doi.org/10.48550/arXiv.2208.12187).
 
 JAXFit also improves on SciPy's algorithm by taking advantage of JAX's in-built [automatic differentiation](https://jax.readthedocs.io/en/latest/notebooks/autodiff_cookbook.html) (autodiff) of Python functions. We use JAX's autodiff to calculate the Jacobians in the NLSQ algorithms rather than requiring the user to give analytic partial derivatives or using numeric approximation techniques.
 
@@ -174,20 +177,21 @@ pip install jax==0.3.14
 
 <!--For more detail on using these pre-built wheels please see the docs.-->
 
-<!--
+
 ## Citing JAXFit
 
-If you use JAXFit consider citing the introductory paper:
+If you use JAXFit consider citing the [introductory paper](https://doi.org/10.48550/arXiv.2208.12187):
 
 ```
 @article{jaxfit,
-  title={JAXFit: Trust Region Method for Nonlinear Least-Squares Curve Fitting on the GPU},
+  title={JAXFit: Trust Region Method for Nonlinear Least-Squares Curve Fitting on the {GPU}},
   author={Hofer, Lucas R and Krstaji{\'c}, Milan and Smith, Robert P},
-  journal={arXiv preprint arXiv:xxxx.xxxxx},
+  journal={arXiv preprint arXiv:2208.12187},
   year={2022}
+  url={https://doi.org/10.48550/arXiv.2208.12187}
 }
 ```
--->
+
 
 ## Reference documentation
 
