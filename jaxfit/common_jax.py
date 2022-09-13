@@ -57,9 +57,8 @@ class CommonJIT():
     
         if s0 is not None:
             s0_jnp = jnp.array(s)
-            u_jnp = self.js_dot(J, s0_jnp)
+            u_jnp = self.js0_dot(J, s0_jnp)
             u = u_jnp.copy()
-            u = J.dot(s0)
             b += np.dot(u, v)
             c = 0.5 * np.dot(u, u) + np.dot(g, s0)
             if diag is not None:
@@ -88,7 +87,14 @@ class CommonJIT():
         @jit
         def js_dot(J, s):
             return J.dot(s)
-        self.js_dot =  js_dot
+
+        @jit
+        def js0_dot(J, s):
+            return J.dot(s)
+
+        self.js_dot = js_dot
+        self.js0_dot = js0_dot
+
 
 
     def create_jac_sum(self):

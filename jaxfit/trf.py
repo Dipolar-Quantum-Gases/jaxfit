@@ -202,22 +202,12 @@ class TrustRegionReflective(TrustRegionJITFunctions):
             f, J, lb, ub, ftol, xtol, gtol, max_nfev, f_scale, x_scale, 
             loss_function, tr_options, verbose):
 
-        
-        # print('inside trf')
 
-     
         x = x0.copy()
         
-        # f = fun(x, xdata, ydata, data_mask, transform)
         f_true = f
         nfev = 1
 
-        # print('xdata', xdata)
-        # print('x', x)        
-        # print('data_mask', data_mask)
-        # print('transform', transform)
-        # J = jac(x, xdata, ydata, data_mask, transform)
-        
         njev = 1
         m, n = J.shape
     
@@ -255,7 +245,6 @@ class TrustRegionReflective(TrustRegionJITFunctions):
             print_header_nonlinear()
     
         while True:
-            # print(g)
             g_norm = norm(g, ord=np.inf)
             if g_norm < gtol:
                 termination_status = 1
@@ -272,11 +261,8 @@ class TrustRegionReflective(TrustRegionJITFunctions):
 
             # g_h = d * g
             g_h_jnp = self.compute_grad_hat(g_jnp, d_jnp)
-            
-            # print('did we get here')
 
             svd_output = self.svd_no_bounds(J, d_jnp, f)
-            # print('but here')
 
             J_h = svd_output[0]
             s, V, uf = [np.array(val) for val in svd_output[2:]]
@@ -589,8 +575,9 @@ class TrustRegionReflective(TrustRegionJITFunctions):
     
         # Check if reflection step is available.
         if r_stride_l <= r_stride_u:
-            a, b, c = self.cJIT.build_quadratic_1d(J_h, g_h, r_h, s0=p_h, 
+            a, b, c = self.cJIT.build_quadratic_1d(J_h, g_h, r_h, s0=p_h,
                                                    diag=diag_h)
+
             r_stride, r_value = minimize_quadratic_1d(
                 a, b, r_stride_l, r_stride_u, c=c)
             r_h *= r_stride
