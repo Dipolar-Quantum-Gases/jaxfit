@@ -56,9 +56,10 @@ class CommonJIT():
         b = np.dot(g, s)
     
         if s0 is not None:
-            s0_jnp = jnp.array(s)
+            s0_jnp = jnp.array(s0)
             u_jnp = self.js0_dot(J, s0_jnp)
             u = u_jnp.copy()
+
             b += np.dot(u, v)
             c = 0.5 * np.dot(u, u) + np.dot(g, s0)
             if diag is not None:
@@ -67,8 +68,8 @@ class CommonJIT():
             return a, b, c
         else:
             return a, b
-    
-    
+
+
     def compute_jac_scale(self, J, scale_inv_old=None):
         """Compute variables scale based on the Jacobian matrix."""
 
