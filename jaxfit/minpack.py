@@ -223,7 +223,6 @@ class CurveFit():
             ydata = jnp.array(np.copy(ydata))
         ctime = time.time() - st
 
-
         data_mask = jnp.array(data_mask, dtype=bool)
         res = self.ls.least_squares(f, p0, jac=jac, xdata=xdata, ydata=ydata, 
                             data_mask=data_mask, transform=transform,

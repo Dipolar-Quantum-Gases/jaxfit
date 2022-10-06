@@ -371,14 +371,14 @@ class TrustRegionReflective(TrustRegionJITFunctions):
         
         if loss_function is not None:
             rho = loss_function(f, f_scale)
-            cost_jnp = self.calculate_cost(rho, data_mask)
+            cost_jnp = self.calculate_cost(rho, data_mask).block_until_ready()
             J, f = self.cJIT.scale_for_robust_loss_function(J, f, rho)
         else:
-            cost_jnp = self.default_loss_func(f)
+            cost_jnp = self.default_loss_func(f).block_until_ready()
             
         cost = np.array(cost_jnp)
 
-        g_jnp = self.compute_grad(J, f)
+        g_jnp = self.compute_grad(J, f).block_until_ready()
         g = np.array(g_jnp)
         
         jac_scale = isinstance(x_scale, str) and x_scale == 'jac'
@@ -468,7 +468,7 @@ class TrustRegionReflective(TrustRegionJITFunctions):
                     x, J_h, diag_h, g_h, p, p_h, d, Delta, lb, ub, theta)
                 
                 x_new = make_strictly_feasible(x + step.copy(), lb, ub, rstep=0)
-                f_new = fun(x_new, xdata, ydata, data_mask, transform)
+                f_new = fun(x_new, xdata, ydata, data_mask, transform).block_until_ready()
 
                 nfev += 1
     
@@ -538,7 +538,7 @@ class TrustRegionReflective(TrustRegionJITFunctions):
     def select_step(self, x, J_h, diag_h, g_h, p, p_h, d, Delta, lb, ub, theta):
         """Select the best step according to Trust Region Reflective algorithm."""
         if in_bounds(x + p, lb, ub):
-            p_value = self.cJIT.evaluate_quadratic(J_h, g_h, p_h, diag=diag_h)
+            p_value = self.cJIT.evaluate_quadratic(J_h, g_h, p_h, diag=diag_h).block_until_ready()
             return p, p_h, -p_value
     
         p_stride, hits = step_size_to_bound(x, p, lb, ub)

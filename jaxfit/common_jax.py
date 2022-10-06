@@ -45,7 +45,7 @@ class CommonJIT():
     
     def build_quadratic_1d(self, J, g, s, diag=None, s0=None):
         s_jnp = jnp.array(s)
-        v_jnp = self.js_dot(J, s_jnp)
+        v_jnp = self.js_dot(J, s_jnp).block_until_ready()
         v = v_jnp.copy()
 
         a = np.dot(v, v)
@@ -57,7 +57,7 @@ class CommonJIT():
     
         if s0 is not None:
             s0_jnp = jnp.array(s0)
-            u_jnp = self.js0_dot(J, s0_jnp)
+            u_jnp = self.js0_dot(J, s0_jnp).block_until_ready()
             u = u_jnp.copy()
 
             b += np.dot(u, v)
@@ -90,8 +90,8 @@ class CommonJIT():
             return J.dot(s)
 
         @jit
-        def js0_dot(J, s):
-            return J.dot(s)
+        def js0_dot(J, s0):
+            return J.dot(s0)
 
         self.js_dot = js_dot
         self.js0_dot = js0_dot
