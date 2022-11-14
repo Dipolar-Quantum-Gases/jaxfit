@@ -101,8 +101,9 @@ class CurveFit():
         
         
     def curve_fit(self, f, xdata, ydata, p0=None, sigma=None, 
-                  absolute_sigma=False, check_finite=True, bounds=(-np.inf, np.inf), 
-                  method=None, jac=None, data_mask=None, timeit=False, **kwargs):
+                  absolute_sigma=False, check_finite=True,
+                  bounds=(-np.inf, np.inf), method=None, jac=None,
+                  data_mask=None, timeit=False, **kwargs):
         
         if p0 is None:
             # determine number of parameters by inspecting the function
@@ -225,8 +226,9 @@ class CurveFit():
 
         data_mask = jnp.array(data_mask, dtype=bool)
         res = self.ls.least_squares(f, p0, jac=jac, xdata=xdata, ydata=ydata, 
-                            data_mask=data_mask, transform=transform,
-                            bounds=bounds, method=method, timeit=timeit, **kwargs)
+                                    data_mask=data_mask, transform=transform,
+                                    bounds=bounds, method=method,
+                                    timeit=timeit, **kwargs)
 
         if not res.success:
             raise RuntimeError("Optimal parameters not found: " + res.message)
