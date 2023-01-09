@@ -14,13 +14,8 @@
 import os
 import sys
 add_path = os.path.abspath("../..")
-print('add_path', add_path, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath("../.."))
 sys.path.insert(0, os.path.abspath('..'))
-# sys.path.insert(0, 'X:\People\Lucas\code\atomcloud')
-# sys.path.insert(0, 'X:\People\Lucas\code\atomcloud\atomcloud')
-# sys.path.insert(0, 'X:\People\Lucas\code\atomcloud\docs')
-# sys.path.insert(0, 'X:\People\Lucas\code\atomcloud\docs\source')
 
 
 

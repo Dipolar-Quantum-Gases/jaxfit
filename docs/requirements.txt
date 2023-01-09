@@ -14,4 +14,5 @@ sphinx-rtd-theme
 numpy
 matplotlib
 scipy
-JAX
+jaxlib>=0.3.20
+JAX>=0.3.20
