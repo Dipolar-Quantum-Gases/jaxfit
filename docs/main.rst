@@ -80,6 +80,7 @@ to a Google Cloud GPU. JAX comes pre-installed so you’ll be able to
 start fitting right away.
 
 We have a few tutorial notebooks including: 
+
 - `The basics: fitting basic functions with JAXFit <https://colab.research.google.com/github/Dipolar-Quantum-Gases/jaxfit/blob/main/docs/notebooks/JAXFit_Quickstart.ipynb>`__
 - `Fitting 2D images with JAXFit <https://colab.research.google.com/github/Dipolar-Quantum-Gases/jaxfit/blob/main/docs/notebooks/JAXFit_2D_Gaussian_Demo.ipynb>`__
 
