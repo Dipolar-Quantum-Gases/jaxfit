@@ -1,8 +1,12 @@
 # should match root/requirements.txt, except for adding these lines for Sphinx
 # used by readthedocs.org to build the docs, which involves importing modules for autodoc
 Sphinx
-nbsphinx
 sphinx-rtd-theme
+
+#for jupyter notebook pages
+nbsphinx
+ipython<=8.6.0
+ipykernel
 
 numpy
 matplotlib
