@@ -1,5 +1,8 @@
 <div align="center">
-<img src="https://github.com/Dipolar-Quantum-Gases/jaxfit/blob/main/images/JAXFit_small.jpg" alt="logo"></img>
+<img src="https://github.com/Dipolar-Quantum-Gases/jaxfit/blob/main/docs/source/images/JAXFit_small.jpg" alt="logo"></img>
+</div>
+<div align="center">
+<img src="docs/source/images/JAXFit_small.jpg" alt="logo"></img>
 </div>
 
 # JAXFit: Nonlinear least squares curve fitting for the GPU/TPU
@@ -63,8 +66,8 @@ article for a more in-depth look at JAX specific caveats).
 The easiest way to test out JAXFit is using a Colab notebook connected to a Google Cloud GPU. JAX comes pre-installed so you'll be able to start fitting right away.
 
 We have a few tutorial notebooks including:
-- [The basics: fitting basic functions with JAXFit](https://colab.research.google.com/github/Dipolar-Quantum-Gases/jaxfit/blob/main/examples/JAXFit%20Quickstart.ipynb)
-- [Fitting 2D images with JAXFit](https://colab.research.google.com/github/Dipolar-Quantum-Gases/jaxfit/blob/main/examples/JAXFit%202D%20Gaussian%20Demo.ipynb)
+- [The basics: fitting basic functions with JAXFit](https://colab.research.google.com/github/Dipolar-Quantum-Gases/jaxfit/blob/main/docs/source/notebooks/JAXFit%20Quickstart.ipynb)
+- [Fitting 2D images with JAXFit](https://colab.research.google.com/github/Dipolar-Quantum-Gases/jaxfit/blob/main/docs/source/notebooks/JAXFit%202D%20Gaussian%20Demo.ipynb)
 
 ## Current gotchas
 
@@ -72,10 +75,9 @@ Full disclosure we've copied most of this from the [JAX repo](https://github.com
 JAX's idiosyncrasies and so the "gotchas" are mostly the same.
 
 ### Double precision required
-First and foremost by default JAX enforces single precision (32-bit, e.g. `float32`), but JAXFit needs double precision (64-bit, e.g. `float64`). [To enable
-   double-precision](https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.html#double-64bit-precision)
-   (64-bit, e.g. `float64`) one needs to set the `jax_enable_x64` variable at
-   startup (or set the environment variable `JAX_ENABLE_X64=True`). 
+First and foremost by default JAX enforces single precision (32-bit, e.g. `float32`), but JAXFit needs double precision (64-bit, e.g. `float64`). 
+[To enable double-precision](https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.html#double-64bit-precision)
+(64-bit, e.g. `float64`) one needs to set the `jax_enable_x64` variable at startup (or set the environment variable `JAX_ENABLE_X64=True`). 
    
 JAXFit does this when it is imported, but should you import JAX before JAXFit, then you'll need to set this flag yourself e.g.
 
@@ -93,23 +95,10 @@ Notebook](https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.h
 Some standouts:
 
 1. JAX transformations only work on [pure functions](https://en.wikipedia.org/wiki/Pure_function), which don't have side-effects and respect [referential transparency](https://en.wikipedia.org/wiki/Referential_transparency) (i.e. object identity testing with `is` isn't preserved). If you use a JAX transformation on an impure Python function, you might see an error like `Exception: Can't lift Traced...`  or `Exception: Different traces at same level`.
-1. [In-place mutating updates of
-   arrays](https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.html#in-place-updates), like `x[i] += y`, aren't supported, but [there are functional alternatives](https://jax.readthedocs.io/en/latest/jax.ops.html). Under a `jit`, those functional alternatives will reuse buffers in-place automatically.
-1. Some transformations, like `jit`, [constrain how you can use Python control
-   flow](https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.html#control-flow).
-   You'll always get loud errors if something goes wrong. You might have to use
-   [`jit`'s `static_argnums`
-   parameter](https://jax.readthedocs.io/en/latest/jax.html#just-in-time-compilation-jit),
-   [structured control flow
-   primitives](https://jax.readthedocs.io/en/latest/jax.lax.html#control-flow-operators)
-   like
-   [`lax.scan`](https://jax.readthedocs.io/en/latest/_autosummary/jax.lax.scan.html#jax.lax.scan).
-1. Some of NumPy's dtype promotion semantics involving a mix of Python scalars
-   and NumPy types aren't preserved, namely `np.add(1, np.array([2],
-   np.float32)).dtype` is `float64` rather than `float32`.
-1. If you're looking for [convolution
-   operators](https://jax.readthedocs.io/en/latest/notebooks/convolutions.html),
-   they're in the `jax.lax` package.
+1. [In-place mutating updates of arrays](https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.html#in-place-updates), like `x[i] += y`, aren't supported, but [there are functional alternatives](https://jax.readthedocs.io/en/latest/jax.ops.html). Under a `jit`, those functional alternatives will reuse buffers in-place automatically.
+1. Some transformations, like `jit`, [constrain how you can use Python control flow](https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.html#control-flow). You'll always get loud errors if something goes wrong. You might have to use [jit's static_argnums parameter](https://jax.readthedocs.io/en/latest/jax.html#just-in-time-compilation-jit), [structured control flow primitives](https://jax.readthedocs.io/en/latest/jax.lax.html#control-flow-operators) like [lax.scan](https://jax.readthedocs.io/en/latest/_autosummary/jax.lax.scan.html#jax.lax.scan).
+1. Some of NumPy's dtype promotion semantics involving a mix of Python scalars and NumPy types aren't preserved, namely `np.add(1, np.array([2], np.float32)).dtype` is `float64` rather than `float32`.
+1. If you're looking for [convolution operators](https://jax.readthedocs.io/en/latest/notebooks/convolutions.html), they're in the `jax.lax` package.
 
 
 ## Installation
@@ -120,7 +109,8 @@ a bit of effort since it is optimized for the computer hardware you'll be using 
 Installing JAX on Linux is natively supported by the JAX team and instructions
 to do so can be found [here](https://github.com/google/jax#installation). 
 
-For Windows systems, the officially supported method is building directly from the source code (see [Building JAX from source](https://jax.readthedocs.io/en/latest/developer.html#building-from-source)). However, we've found it easier to use pre-built JAX wheels which can be found in [this Github repo](https://github.com/cloudhan/jax-windows-builder) and we've included detailed instructions on this installation process below.
+For Windows systems, the officially supported method is building directly from the source code 
+(see [Building JAX from source](https://jax.readthedocs.io/en/latest/developer.html#building-from-source)). However, we've found it easier to use pre-built JAX wheels which can be found in [this Github repo](https://github.com/cloudhan/jax-windows-builder) and we've included detailed instructions on this installation process below.
 
 After installing JAX, you can now install JAXFit via the following pip command
 
