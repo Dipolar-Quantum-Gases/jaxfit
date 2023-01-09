@@ -1,7 +1,4 @@
 <div align="center">
-<img src="https://github.com/Dipolar-Quantum-Gases/jaxfit/blob/main/docs/source/images/JAXFit_small.jpg" alt="logo"></img>
-</div>
-<div align="center">
 <img src="docs/source/images/JAXFit_small.jpg" alt="logo"></img>
 </div>
 

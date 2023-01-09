@@ -2,7 +2,7 @@
 build/
 dist/
 *.egg-info/
-requirements.txt
+__pycache__/
 benchmark/results/*
 !benchmark/results/hold.txt
 CITATION.bib
