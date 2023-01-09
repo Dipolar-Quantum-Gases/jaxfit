@@ -65,14 +65,16 @@ class CommonJIT():
                            s0: Optional[jnp.ndarray] = None
                            ) -> Union[Tuple[np.ndarray, np.ndarray, np.ndarray], 
                                       Tuple[np.ndarray, np.ndarray]]:
+
         """Parameterize a multivariate quadratic function along a line.
+
         The resulting univariate quadratic function is given as follows:
-        ::
+
             f(t) = 0.5 * (s0 + s*t).T * (J.T*J + diag) * (s0 + s*t) + g.T * (s0 + s*t)
 
         Parameters
         ----------
-        J : ndarray, sparse matrix or LinearOperator shape (m, n)
+        J : ndarray, sparse matrix or LinearOperator, shape (m, n)
             Jacobian matrix, affects the quadratic term.
         g : ndarray, shape (n,)
             Gradient, defines the linear term.
@@ -92,9 +94,9 @@ class CommonJIT():
             Coefficient for t.
         c : float
             Free term. Returned only if `s0` is provided.
-
+            
         """
-        
+
         s_jnp = jnp.array(s)
         v_jnp = self.js_dot(J, s_jnp)
         v = v_jnp.copy()

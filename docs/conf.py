@@ -44,6 +44,11 @@ extensions = [
     'nbsphinx'
     ]
     # 'sphinx_mdinclude']
+    
+suppress_warnings = [
+    'ref.citation',  # Many duplicated citations in numpy/scipy docstrings.
+    'ref.footnote',  # Many unreferenced footnotes in numpy/scipy docstrings
+]
 
 nbsphinx_execute = 'never'
 nbsphinx_allow_errors = True

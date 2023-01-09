@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 
-.. include:: README.rst
+.. include:: main.rst
 
 
 JAXFit Documentation
@@ -13,9 +13,8 @@ JAXFit Documentation
 .. toctree::
    :maxdepth: 1
 
-
-   autodoc/jaxfit
    notebooks
+   autodoc/modules
 
 
 

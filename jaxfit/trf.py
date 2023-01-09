@@ -1,36 +1,48 @@
 """Trust Region Reflective algorithm for least-squares optimization.
 The algorithm is based on ideas from paper [STIR]_. The main idea is to
 account for the presence of the bounds by appropriate scaling of the variables (or,
-equivalently, changing a trust-region shape). Let's introduce a vector v:
+equivalently, changing a trust-region shape). Let's introduce a vector v::
+
            | ub[i] - x[i], if g[i] < 0 and ub[i] < np.inf
     v[i] = | x[i] - lb[i], if g[i] > 0 and lb[i] > -np.inf
            | 1,           otherwise
+
 where g is the gradient of a cost function and lb, ub are the bounds. Its
 components are distances to the bounds at which the anti-gradient points (if
 this distance is finite). Define a scaling matrix D = diag(v**0.5).
-First-order optimality conditions can be stated as
+First-order optimality conditions can be stated as::
+
     D^2 g(x) = 0.
+
 Meaning that components of the gradient should be zero for strictly interior
 variables, and components must point inside the feasible region for variables
 on the bound.
 Now consider this system of equations as a new optimization problem. If the
 point x is strictly interior (not on the bound), then the left-hand side is
-differentiable and the Newton step for it satisfies
+differentiable and the Newton step for it satisfies::
+
     (D^2 H + diag(g) Jv) p = -D^2 g
+
 where H is the Hessian matrix (or its J^T J approximation in least squares),
 Jv is the Jacobian matrix of v with components -1, 1 or 0, such that all
 elements of matrix C = diag(g) Jv are non-negative. Introduce the change
 of the variables x = D x_h (_h would be "hat" in LaTeX). In the new variables,
-we have a Newton step satisfying
+we have a Newton step satisfying::
+
     B_h p_h = -g_h,
+
 where B_h = D H D + C, g_h = D g. In least squares B_h = J_h^T J_h, where
 J_h = J D. Note that J_h and g_h are proper Jacobian and gradient with respect
 to "hat" variables. To guarantee global convergence we formulate a
-trust-region problem based on the Newton step in the new variables:
+trust-region problem based on the Newton step in the new variables::
+
     0.5 * p_h^T B_h p + g_h^T p_h -> min, ||p_h|| <= Delta
+
 In the original space B = H + D^{-1} C D^{-1}, and the equivalent trust-region
-problem is
+problem is::
+
     0.5 * p^T B p + g^T p -> min, ||D^{-1} p|| <= Delta
+
 Here, the meaning of the matrix D becomes more clear: it alters the shape
 of a trust-region, such that large steps towards the bounds are not allowed.
 In the implementation, the trust-region problem is solved in "hat" space,
@@ -172,6 +184,7 @@ class TrustRegionJITFunctions():
             The gradient of the loss function.
             d : jnp.ndarray
             The diagonal of the diagonal matrix D.
+
             Returns
             -------
             jnp.ndarray
@@ -234,6 +247,7 @@ class TrustRegionJITFunctions():
                                   jnp.ndarray, jnp.ndarray]:
             """Compute the SVD of the Jacobian matrix, J, in the "hat" space.
             This is the version for problems with bounds.
+
             Parameters
             ----------
             J : jnp.ndarray
@@ -278,12 +292,14 @@ class TrustRegionJITFunctions():
         @jit
         def calculate_cost(rho, data_mask):
             """Calculate the cost function.
+
             Parameters
             ----------
             rho : jnp.ndarray
                 The per element cost times two.
             data_mask : jnp.ndarray
                 The mask for the data.
+
             Returns
             -------
             jnp.ndarray
@@ -299,10 +315,12 @@ class TrustRegionJITFunctions():
         @jit
         def isfinite(f_new: jnp.ndarray) -> bool:
             """Check if the evaluated residuals are finite.
+
             Parameters
             ----------
             f_new : jnp.ndarray
                 The evaluated residuals.
+
             Returns
             -------
             bool
@@ -406,8 +424,10 @@ class TrustRegionReflective(TrustRegionJITFunctions):
             Options for the trust-region algorithm.
         verbose : int
             Level of algorithm's verbosity:
+
                 * 0 (default) : work silently.
                 * 1 : display a termination report.
+
         timeit : bool, optional
             If True, the time for each step is measured if the unbounded
             version is being ran. Default is False.
@@ -505,6 +525,7 @@ class TrustRegionReflective(TrustRegionJITFunctions):
             Options for the trust-region algorithm.
         verbose : int
             Level of algorithm's verbosity: 
+
                 * 0 (default) : work silently.
                 * 1 : display a termination report.
 
@@ -519,13 +540,7 @@ class TrustRegionReflective(TrustRegionJITFunctions):
 
         Notes
         -----
-        The algorithm is described in [1]_.
-
-        References
-        ----------
-        .. [1] J. J. More, "The Levenberg-Marquardt Algorithm: Implementation and
-                Theory," Numerical Analysis, ed. G. A. Watson, Lecture Notes in
-                Mathematics 630, Springer Verlag, pp. 105-116, 1977.
+        The algorithm is described in [13]_.
 
         """
 
@@ -593,8 +608,9 @@ class TrustRegionReflective(TrustRegionJITFunctions):
                 step_h, alpha, n_iter = solve_lsq_trust_region(
                     n, m, uf, s, V, Delta, initial_alpha=alpha)
     
-                predicted_reduction_jnp = -self.cJIT.evaluate_quadratic(J_h, g_h_jnp, 
-                                                                    step_h)
+                predicted_reduction_jnp = -self.cJIT.evaluate_quadratic(J_h, 
+                                                                        g_h_jnp, 
+                                                                        step_h)
                 predicted_reduction = np.array(predicted_reduction_jnp)
 
                 step = d * step_h
@@ -741,6 +757,7 @@ class TrustRegionReflective(TrustRegionJITFunctions):
             Options for the trust-region algorithm.
         verbose : int
             Level of algorithm's verbosity: 
+
                 * 0 (default) : work silently.
                 * 1 : display a termination report.
 
@@ -755,11 +772,11 @@ class TrustRegionReflective(TrustRegionJITFunctions):
 
         Notes
         -----
-        The algorithm is described in [1]_.
+        The algorithm is described in [13]_.
 
         References
         ----------
-        .. [1] J. J. More, "The Levenberg-Marquardt Algorithm: Implementation and
+        .. [13] J. J. More, "The Levenberg-Marquardt Algorithm: Implementation and
                 Theory," in Numerical Analysis, ed. G. A. Watson (1978), pp. 105-116.
                 DOI: 10.1017/CBO9780511819595.006
         .. [2] T. F. Coleman and Y. Li, “An interior trust region approach for 
@@ -1147,6 +1164,7 @@ class TrustRegionReflective(TrustRegionJITFunctions):
             Options for the trust-region algorithm.
         verbose : int
             Level of algorithm's verbosity: 
+
                 * 0 (default) : work silently.
                 * 1 : display a termination report.
 
@@ -1161,13 +1179,7 @@ class TrustRegionReflective(TrustRegionJITFunctions):
 
         Notes
         -----
-        The algorithm is described in [1]_.
-
-        References
-        ----------
-        .. [1] J. J. More, "The Levenberg-Marquardt Algorithm: Implementation and
-                Theory," Numerical Analysis, ed. G. A. Watson, Lecture Notes in
-                Mathematics 630, Springer Verlag, pp. 105-116, 1977.
+        The algorithm is described in [13]_.
         """
       
         ftimes = []

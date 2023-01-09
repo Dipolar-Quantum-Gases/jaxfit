@@ -1,5 +1,5 @@
 <div align="center">
-<img src="docs/source/images/JAXFit_small.jpg" alt="logo"></img>
+<img src="docs/images/JAXFit_small.jpg" alt="logo"></img>
 </div>
 
 # JAXFit: Nonlinear least squares curve fitting for the GPU/TPU
@@ -8,10 +8,7 @@
 [**Quickstart**](#quickstart-colab-in-the-cloud)
 | [**Install guide**](#installation)
 | [**ArXiv Paper**](https://doi.org/10.48550/arXiv.2208.12187)
-
-<!--
-| [**Reference docs**](https://youtu.be/xvFZjo5PgG0)
--->
+| [**Documentation**](https://jaxfit.readthedocs.io/)
 
 ## What is JAXFit?
 
@@ -63,8 +60,8 @@ article for a more in-depth look at JAX specific caveats).
 The easiest way to test out JAXFit is using a Colab notebook connected to a Google Cloud GPU. JAX comes pre-installed so you'll be able to start fitting right away.
 
 We have a few tutorial notebooks including:
-- [The basics: fitting basic functions with JAXFit](https://colab.research.google.com/github/Dipolar-Quantum-Gases/jaxfit/blob/main/docs/source/notebooks/JAXFit%20Quickstart.ipynb)
-- [Fitting 2D images with JAXFit](https://colab.research.google.com/github/Dipolar-Quantum-Gases/jaxfit/blob/main/docs/source/notebooks/JAXFit%202D%20Gaussian%20Demo.ipynb)
+- [The basics: fitting basic functions with JAXFit](https://colab.research.google.com/github/Dipolar-Quantum-Gases/jaxfit/blob/main/docs/notebooks/JAXFit_Quickstart.ipynb)
+- [Fitting 2D images with JAXFit](https://colab.research.google.com/github/Dipolar-Quantum-Gases/jaxfit/blob/main/docs/notebooks/JAXFit_2D_Gaussian_Demo.ipynb)
 
 ## Current gotchas
 
@@ -183,4 +180,4 @@ If you use JAXFit consider citing the [introductory paper](https://doi.org/10.48
 ## Reference documentation
 
 For details about the JAXFit API, see the
-[reference documentation](https://jax.readthedocs.io/).
+[reference documentation](https://jaxfit.readthedocs.io/).

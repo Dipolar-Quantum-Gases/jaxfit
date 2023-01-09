@@ -56,7 +56,7 @@ def intersect_trust_region(x, s, Delta):
 def solve_lsq_trust_region(n, m, uf, s, V, Delta, initial_alpha=None,
                            rtol=0.01, max_iter=10):
     """Solve a trust-region problem arising in least-squares minimization.
-    This function implements a method described by J. J. More [1]_ and used
+    This function implements a method described by J. J. More [12]_ and used
     in MINPACK, but it relies on a single SVD of Jacobian instead of series
     of Cholesky decompositions. Before running this function, compute:
     ``U, s, VT = svd(J, full_matrices=False)``.
@@ -97,7 +97,7 @@ def solve_lsq_trust_region(n, m, uf, s, V, Delta, initial_alpha=None,
 
     References
     ----------
-    .. [1] More, J. J., "The Levenberg-Marquardt Algorithm: Implementation
+    .. [12] More, J. J., "The Levenberg-Marquardt Algorithm: Implementation
            and Theory," Numerical Analysis, ed. G. A. Watson, Lecture Notes
            in Mathematics 630, Springer Verlag, pp. 105-116, 1977.
 
@@ -105,7 +105,7 @@ def solve_lsq_trust_region(n, m, uf, s, V, Delta, initial_alpha=None,
     def phi_and_derivative(alpha, suf, s, Delta):
         """Function of which to find zero.
         It is defined as "norm of regularized (by alpha) least-squares
-        solution minus `Delta`". Refer to [1]_.
+        solution minus `Delta`". Refer to [12]_.
         """
         denom = s**2 + alpha
         p_norm = norm(suf / denom)
@@ -379,6 +379,7 @@ def step_size_to_bound(x, s, lb, ub):
     hits : ndarray of int with shape of x
         Each element indicates whether a corresponding variable reaches the
         bound:
+        
              *  0 - the bound was not hit.
              * -1 - the lower bound was hit.
              *  1 - the upper bound was hit.
@@ -461,10 +462,14 @@ def make_strictly_feasible(x, lb, ub, rstep=1e-10):
 
 def CL_scaling_vector(x, g, lb, ub):
     """Compute Coleman-Li scaling vector and its derivatives.
-    Components of a vector v are defined as follows:
-    ::
+    Components of a vector v are defined as follows::
+
+               | ub[i] - x[i], if g[i] < 0 and ub[i] < np.inf
+        v[i] = | x[i] - lb[i], if g[i] > 0 and lb[i] > -np.inf
+               | 1,           otherwise
+
     According to this definition v[i] >= 0 for all i. It differs from the
-    definition in paper [1]_ (eq. (2.2)), where the absolute value of v is
+    definition in paper [5]_ (eq. (2.2)), where the absolute value of v is
     used. Both definitions are equivalent down the line.
     Derivatives of v with respect to x take value 1, -1 or 0 depending on a
     case.
@@ -476,10 +481,10 @@ def CL_scaling_vector(x, g, lb, ub):
     dv : ndarray with shape of x
         Derivatives of v[i] with respect to x[i], diagonal elements of v's
         Jacobian.
-        
+
     References
     ----------
-    .. [1] M.A. Branch, T.F. Coleman, and Y. Li, "A Subspace, Interior,
+    .. [5] M.A. Branch, T.F. Coleman, and Y. Li, "A Subspace, Interior,
            and Conjugate Gradient Method for Large-Scale Bound-Constrained
            Minimization Problems," SIAM Journal on Scientific Computing,
            Vol. 21, Number 1, pp 1-23, 1999.
@@ -581,117 +586,117 @@ def print_iteration_linear(iteration, cost, cost_reduction, step_norm,
 # Simple helper functions.
 
 
-def compute_grad(J, f):
-    """Compute gradient of the least-squares cost function."""
-    if isinstance(J, LinearOperator):
-        return J.rmatvec(f)
-    else:
-        print('isdot')
-        return J.T.dot(f)
+# def compute_grad(J, f):
+#     """Compute gradient of the least-squares cost function."""
+#     if isinstance(J, LinearOperator):
+#         return J.rmatvec(f)
+#     else:
+#         print('isdot')
+#         return J.T.dot(f)
 
 
-def compute_jac_scale(J, scale_inv_old=None):
-    """Compute variables scale based on the Jacobian matrix."""
-    if issparse(J):
-        scale_inv = np.asarray(J.power(2).sum(axis=0)).ravel()**0.5
-    else:
-        scale_inv = np.sum(J**2, axis=0)**0.5
+# def compute_jac_scale(J, scale_inv_old=None):
+#     """Compute variables scale based on the Jacobian matrix."""
+#     if issparse(J):
+#         scale_inv = np.asarray(J.power(2).sum(axis=0)).ravel()**0.5
+#     else:
+#         scale_inv = np.sum(J**2, axis=0)**0.5
 
-    if scale_inv_old is None:
-        scale_inv[scale_inv == 0] = 1
-    else:
-        scale_inv = np.maximum(scale_inv, scale_inv_old)
+#     if scale_inv_old is None:
+#         scale_inv[scale_inv == 0] = 1
+#     else:
+#         scale_inv = np.maximum(scale_inv, scale_inv_old)
 
-    return 1 / scale_inv, scale_inv
-
-
-def left_multiplied_operator(J, d):
-    """Return diag(d) J as LinearOperator."""
-    J = aslinearoperator(J)
-
-    def matvec(x):
-        return d * J.matvec(x)
-
-    def matmat(X):
-        return d[:, np.newaxis] * J.matmat(X)
-
-    def rmatvec(x):
-        return J.rmatvec(x.ravel() * d)
-
-    return LinearOperator(J.shape, matvec=matvec, matmat=matmat,
-                          rmatvec=rmatvec)
+#     return 1 / scale_inv, scale_inv
 
 
-def right_multiplied_operator(J, d):
-    """Return J diag(d) as LinearOperator."""
-    J = aslinearoperator(J)
+# def left_multiplied_operator(J, d):
+#     """Return diag(d) J as LinearOperator."""
+#     J = aslinearoperator(J)
 
-    def matvec(x):
-        return J.matvec(np.ravel(x) * d)
+#     def matvec(x):
+#         return d * J.matvec(x)
 
-    def matmat(X):
-        return J.matmat(X * d[:, np.newaxis])
+#     def matmat(X):
+#         return d[:, np.newaxis] * J.matmat(X)
 
-    def rmatvec(x):
-        return d * J.rmatvec(x)
+#     def rmatvec(x):
+#         return J.rmatvec(x.ravel() * d)
 
-    return LinearOperator(J.shape, matvec=matvec, matmat=matmat,
-                          rmatvec=rmatvec)
-
-
-def regularized_lsq_operator(J, diag):
-    """Return a matrix arising in regularized least squares as LinearOperator.
-    The matrix is
-        [ J ]
-        [ D ]
-    where D is diagonal matrix with elements from `diag`.
-    """
-    J = aslinearoperator(J)
-    m, n = J.shape
-
-    def matvec(x):
-        return np.hstack((J.matvec(x), diag * x))
-
-    def rmatvec(x):
-        x1 = x[:m]
-        x2 = x[m:]
-        return J.rmatvec(x1) + diag * x2
-
-    return LinearOperator((m + n, n), matvec=matvec, rmatvec=rmatvec)
+#     return LinearOperator(J.shape, matvec=matvec, matmat=matmat,
+#                           rmatvec=rmatvec)
 
 
-def right_multiply(J, d, copy=True):
-    """Compute J diag(d).
-    If `copy` is False, `J` is modified in place (unless being LinearOperator).
-    """
-    if copy and not isinstance(J, LinearOperator):
-        J = J.copy()
+# def right_multiplied_operator(J, d):
+#     """Return J diag(d) as LinearOperator."""
+#     J = aslinearoperator(J)
 
-    if issparse(J):
-        J.data *= d.take(J.indices, mode='clip')  # scikit-learn recipe.
-    elif isinstance(J, LinearOperator):
-        J = right_multiplied_operator(J, d)
-    else:
-        J *= d
+#     def matvec(x):
+#         return J.matvec(np.ravel(x) * d)
 
-    return J
+#     def matmat(X):
+#         return J.matmat(X * d[:, np.newaxis])
+
+#     def rmatvec(x):
+#         return d * J.rmatvec(x)
+
+#     return LinearOperator(J.shape, matvec=matvec, matmat=matmat,
+#                           rmatvec=rmatvec)
 
 
-def left_multiply(J, d, copy=True):
-    """Compute diag(d) J.
-    If `copy` is False, `J` is modified in place (unless being LinearOperator).
-    """
-    if copy and not isinstance(J, LinearOperator):
-        J = J.copy()
+# def regularized_lsq_operator(J, diag):
+#     """Return a matrix arising in regularized least squares as LinearOperator.
+#     The matrix is
+#         [ J ]
+#         [ D ]
+#     where D is diagonal matrix with elements from `diag`.
+#     """
+#     J = aslinearoperator(J)
+#     m, n = J.shape
 
-    if issparse(J):
-        J.data *= np.repeat(d, np.diff(J.indptr))  # scikit-learn recipe.
-    elif isinstance(J, LinearOperator):
-        J = left_multiplied_operator(J, d)
-    else:
-        J *= d[:, np.newaxis]
+#     def matvec(x):
+#         return np.hstack((J.matvec(x), diag * x))
 
-    return J
+#     def rmatvec(x):
+#         x1 = x[:m]
+#         x2 = x[m:]
+#         return J.rmatvec(x1) + diag * x2
+
+#     return LinearOperator((m + n, n), matvec=matvec, rmatvec=rmatvec)
+
+
+# def right_multiply(J, d, copy=True):
+#     """Compute J diag(d).
+#     If `copy` is False, `J` is modified in place (unless being LinearOperator).
+#     """
+#     if copy and not isinstance(J, LinearOperator):
+#         J = J.copy()
+
+#     if issparse(J):
+#         J.data *= d.take(J.indices, mode='clip')  # scikit-learn recipe.
+#     elif isinstance(J, LinearOperator):
+#         J = right_multiplied_operator(J, d)
+#     else:
+#         J *= d
+
+#     return J
+
+
+# def left_multiply(J, d, copy=True):
+#     """Compute diag(d) J.
+#     If `copy` is False, `J` is modified in place (unless being LinearOperator).
+#     """
+#     if copy and not isinstance(J, LinearOperator):
+#         J = J.copy()
+
+#     if issparse(J):
+#         J.data *= np.repeat(d, np.diff(J.indptr))  # scikit-learn recipe.
+#     elif isinstance(J, LinearOperator):
+#         J = left_multiplied_operator(J, d)
+#     else:
+#         J *= d[:, np.newaxis]
+
+#     return J
 
 
 def check_termination(dF, F, dx_norm, x_norm, ratio, ftol, xtol):
@@ -709,14 +714,14 @@ def check_termination(dF, F, dx_norm, x_norm, ratio, ftol, xtol):
         return None
 
 
-def scale_for_robust_loss_function(J, f, rho):
-    """Scale Jacobian and residuals for a robust loss function.
-    Arrays are modified in place.
-    """
-    J_scale = rho[1] + 2 * rho[2] * f**2
-    J_scale[J_scale < EPS] = EPS
-    J_scale **= 0.5
+# def scale_for_robust_loss_function(J, f, rho):
+#     """Scale Jacobian and residuals for a robust loss function.
+#     Arrays are modified in place.
+#     """
+#     J_scale = rho[1] + 2 * rho[2] * f**2
+#     J_scale[J_scale < EPS] = EPS
+#     J_scale **= 0.5
 
-    f *= rho[1] / J_scale
+#     f *= rho[1] / J_scale
 
-    return left_multiply(J, J_scale, copy=False), f
+#     return left_multiply(J, J_scale, copy=False), f
