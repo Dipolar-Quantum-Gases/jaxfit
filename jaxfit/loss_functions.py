@@ -1,12 +1,7 @@
 from jax.config import config
-print('bs1')
 config.update("jax_enable_x64", True)
-print('bs2')
 import jax.numpy as jnp
-print('bs3')
 from jax import jit
-print('bs4')
-
 
 
 class LossFunctionsJIT():
