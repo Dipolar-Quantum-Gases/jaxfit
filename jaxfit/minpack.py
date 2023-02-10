@@ -79,8 +79,18 @@ class CurveFit():
         self.flength = flength
         self.create_sigma_transform_funcs()
         self.create_covariance_svd()
-        
         self.ls = LeastSquares()
+
+
+    def update_flength(self, flength: float):
+        """Set the fixed input data length.
+
+        Parameters
+        ----------
+        flength : float
+            The fixed input data length.
+        """
+        self.flength = flength
                 
         
     def create_sigma_transform_funcs(self):
