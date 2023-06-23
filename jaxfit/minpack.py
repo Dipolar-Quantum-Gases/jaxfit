@@ -215,6 +215,7 @@ class CurveFit():
                   jac: Optional[Callable] = None,
                   data_mask: Optional[np.ndarray] = None, 
                   timeit: bool = False, 
+                  return_eval: bool = False,
                   **kwargs
                   ) -> Tuple[np.ndarray, np.ndarray]:
         """
@@ -404,7 +405,11 @@ class CurveFit():
         if xlen != m:
             print(xdata.shape, ydata.shape)
             raise ValueError('X and Y data lengths dont match')
-            
+        
+        if data_mask is None:
+            none_mask = True
+        else:
+            none_mask = False
             
         if self.flength is not None:
             len_diff = self.flength - m
@@ -412,12 +417,13 @@ class CurveFit():
                 if len(data_mask) != m:
                     raise ValueError('Data mask doesnt match data lengths.')
             else:
-                data_mask = np.ones(m)
+                data_mask = np.ones(m, dtype=bool)
                 if len_diff > 0:
-                    data_mask = np.concatenate([data_mask, np.zeros(len_diff)])
+                    data_mask = np.concatenate([data_mask, 
+                                                np.zeros(len_diff, dtype=bool)])
         else:
             len_diff = 0
-            data_mask = np.ones(m)
+            data_mask = np.ones(m, dtype=bool)
             
         
         if self.flength is not None:
@@ -468,18 +474,18 @@ class CurveFit():
         
         st = time.time()
         if timeit:
-            xdata = jnp.array(np.copy(xdata)).block_until_ready()
-            ydata = jnp.array(np.copy(ydata)).block_until_ready()
+            jnp_xdata = jnp.array(np.copy(xdata)).block_until_ready()
+            jnp_ydata = jnp.array(np.copy(ydata)).block_until_ready()
         else:
-            xdata = jnp.array(np.copy(xdata))
-            ydata = jnp.array(np.copy(ydata))
+            jnp_xdata = jnp.array(np.copy(xdata))
+            jnp_ydata = jnp.array(np.copy(ydata))
         ctime = time.time() - st
 
-        data_mask = jnp.array(data_mask, dtype=bool)
-        res = self.ls.least_squares(f, p0, jac=jac, xdata=xdata, ydata=ydata, 
-                                    data_mask=data_mask, transform=transform,
-                                    bounds=bounds, method=method,
-                                    timeit=timeit, **kwargs)
+        jnp_data_mask = jnp.array(data_mask, dtype=bool)
+        res = self.ls.least_squares(f, p0, jac=jac, xdata=jnp_xdata, 
+                                    ydata=jnp_ydata, data_mask=jnp_data_mask, 
+                                    transform=transform, bounds=bounds, 
+                                    method=method, timeit=timeit, **kwargs)
 
         if not res.success:
             raise RuntimeError("Optimal parameters not found: " + res.message)
@@ -517,10 +523,23 @@ class CurveFit():
         if warn_cov:
             warnings.warn('Covariance of the parameters could not be estimated',
                           category=OptimizeWarning)
-        res.pop('jac')
-        res.pop('fun')
+
         # self.res = res
         post_time = time.time() - st
+
+        if return_eval:
+            feval = f(jnp_xdata, *popt)
+            feval = np.array(feval)
+            if none_mask:
+                # data_mask = np.ndarray.astype(data_mask, bool)
+                return popt, pcov, feval[data_mask]
+            else:
+                return popt, pcov, feval
+        else:
+            #lower GPU memory usage
+            res.pop('jac')
+            res.pop('fun')
+
         if return_full:
             raise RuntimeError("Return full only works for LM")
             # return popt, pcov, infodict, errmsg, ier
